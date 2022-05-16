@@ -2,7 +2,7 @@ import '@tensorflow/tfjs-backend-cpu';
 import * as tf from '@tensorflow/tfjs-core';
 import * as tflite from '@tensorflow/tfjs-tflite';
 import {useCallback, useEffect, useRef, useState} from "react";
-import Camera, { FACING_MODES } from 'react-html5-camera-photo';
+// import Camera, { FACING_MODES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 
 // import src from './t2.jpg';
@@ -69,14 +69,50 @@ const MODEL_SIZE = 320;
 
 
 function App() {
+    const videoRef = useRef(null);
+    // const canvasRef = useRef(null);
+    // const imageRef = useRef(null);
+
+
     const imageRef = useRef(null);
     const [model, setModel] = useState(null);
+    // eslint-disable-next-line no-unused-vars
     const [photo, setPhoto] = useState(null);
     const [isLoadPhoto, setIsLoadPhoto] = useState(false);
+    // eslint-disable-next-line no-unused-vars
     const [box, setBox] = useState({});
+    // eslint-disable-next-line no-unused-vars
     const [points, setPoints] = useState({});
     const [size, setSize] = useState({width: undefined, height: 0});
 
+    useEffect(() => {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices
+                .getUserMedia({
+                    audio: false,
+                    video: {
+                        facingMode: "environment"
+                    }
+                })
+                .then(async (stream) => {
+                    window.stream = stream;
+                    videoRef.current.srcObject = stream;
+
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+
+                    console.log(devices)
+                    return new Promise((resolve) => {
+                        videoRef.current.onloadedmetadata = () => {
+                            resolve();
+                        };
+                    });
+                });
+        }
+    }, []);
+
+    useEffect(() => {
+
+    }, [])
 
     useEffect(() => {
         tflite.loadTFLiteModel(MODEL).then(_model => {
@@ -152,6 +188,7 @@ function App() {
         }
     }, [model, size]);
 
+    // eslint-disable-next-line no-unused-vars
     const onLoadImg = useCallback(() => {
         setSize({
             width: imageRef.current.width,
@@ -160,6 +197,7 @@ function App() {
         setIsLoadPhoto(true);
     }, [setSize, setIsLoadPhoto]);
 
+    // eslint-disable-next-line no-unused-vars
     const onTakePhoto = useCallback((data) => {
         setIsLoadPhoto(false);
         setPhoto(data);
@@ -172,64 +210,79 @@ function App() {
     }, [predict, isLoadPhoto])
 
     return (
-        <div>
+        <div style={{
+            width: '100vw',
+            height: '100vh',
+        }}>
 
-            <Camera
-                idealFacingMode = {FACING_MODES.ENVIRONMENT}
-                onTakePhoto={onTakePhoto}
-                isSilentMode={true}
-            />
-            {photo && (
-                <div style={{height: `600px`, width: size.width, position: 'relative'}}>
-                    {/*<img src={src} alt="" style={{height: `100%`}}/>*/}
-                    <img ref={imageRef} src={photo} alt="" style={{height: `100%`}} onLoad={onLoadImg}/>
-                    {Object.entries(box).map(([index, {probability, color, ...style}]) => (
-                        <div key={index} style={{
-                            position: 'absolute',
-                            border: '2px solid',
-                            borderColor: color,
-                            color,
-                            ...style
-                        }}>
-                            {/*<div style={{*/}
-                            {/*    fontSize: '12px',*/}
-                            {/*    position: 'absolute',*/}
-                            {/*    top: '-19px',*/}
-                            {/*    left: '-3px',*/}
-                            {/*    padding: '0px 3px',*/}
-                            {/*    backgroundColor: 'white'*/}
-                            {/*}}>*/}
-                            {/*    {probability}*/}
-                            {/*</div>*/}
-                        </div>
-                    ))}
-                    {Object.entries(points).map(([index, {probability, color, ...style}]) => (
-                        <div key={index} style={{
-                            position: 'absolute',
-                            backgroundColor: color,
-                            width: '16px',
-                            height: '16px',
-                            marginLeft: '-8px',
-                            marginTop: '-8px',
-                            borderRadius: '8px',
-                            color,
-                            ...style
-                        }}>
-                            {/*<div style={{*/}
-                            {/*    fontSize: '12px',*/}
-                            {/*    position: 'absolute',*/}
-                            {/*    top: '-19px',*/}
-                            {/*    left: '-3px',*/}
-                            {/*    padding: '0px 3px',*/}
-                            {/*    backgroundColor: 'white'*/}
-                            {/*}}>*/}
-                            {/*    {probability}*/}
-                            {/*</div>*/}
-                        </div>
-                    ))}
-                </div>
-            ) }
-            {model && <p>ready</p>}
+        <video
+          style={{height: '100vh', width: "100vw"}}
+          className="size"
+          autoPlay
+          playsInline
+          muted
+          ref={videoRef}
+          width="640"
+          height="640"
+          id="frame"
+        />
+
+            {/*<Camera*/}
+            {/*    idealFacingMode = {FACING_MODES.ENVIRONMENT}*/}
+            {/*    onTakePhoto={onTakePhoto}*/}
+            {/*    isSilentMode={true}*/}
+            {/*/>*/}
+            {/*{photo && (*/}
+            {/*    <div style={{height: `600px`, width: size.width, position: 'relative'}}>*/}
+            {/*        /!*<img src={src} alt="" style={{height: `100%`}}/>*!/*/}
+            {/*        <img ref={imageRef} src={photo} alt="" style={{height: `100%`}} onLoad={onLoadImg}/>*/}
+            {/*        {Object.entries(box).map(([index, {probability, color, ...style}]) => (*/}
+            {/*            <div key={index} style={{*/}
+            {/*                position: 'absolute',*/}
+            {/*                border: '2px solid',*/}
+            {/*                borderColor: color,*/}
+            {/*                color,*/}
+            {/*                ...style*/}
+            {/*            }}>*/}
+            {/*                /!*<div style={{*!/*/}
+            {/*                /!*    fontSize: '12px',*!/*/}
+            {/*                /!*    position: 'absolute',*!/*/}
+            {/*                /!*    top: '-19px',*!/*/}
+            {/*                /!*    left: '-3px',*!/*/}
+            {/*                /!*    padding: '0px 3px',*!/*/}
+            {/*                /!*    backgroundColor: 'white'*!/*/}
+            {/*                /!*}}>*!/*/}
+            {/*                /!*    {probability}*!/*/}
+            {/*                /!*</div>*!/*/}
+            {/*            </div>*/}
+            {/*        ))}*/}
+            {/*        {Object.entries(points).map(([index, {probability, color, ...style}]) => (*/}
+            {/*            <div key={index} style={{*/}
+            {/*                position: 'absolute',*/}
+            {/*                backgroundColor: color,*/}
+            {/*                width: '16px',*/}
+            {/*                height: '16px',*/}
+            {/*                marginLeft: '-8px',*/}
+            {/*                marginTop: '-8px',*/}
+            {/*                borderRadius: '8px',*/}
+            {/*                color,*/}
+            {/*                ...style*/}
+            {/*            }}>*/}
+            {/*                /!*<div style={{*!/*/}
+            {/*                /!*    fontSize: '12px',*!/*/}
+            {/*                /!*    position: 'absolute',*!/*/}
+            {/*                /!*    top: '-19px',*!/*/}
+            {/*                /!*    left: '-3px',*!/*/}
+            {/*                /!*    padding: '0px 3px',*!/*/}
+            {/*                /!*    backgroundColor: 'white'*!/*/}
+            {/*                /!*}}>*!/*/}
+            {/*                /!*    {probability}*!/*/}
+            {/*                /!*</div>*!/*/}
+            {/*            </div>*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+            {/*) }*/}
+            {/*{model && <p>ready</p>}*/}
         </div>
     );
 }
