@@ -104,7 +104,7 @@ function App() {
 
                     setSize({
                         width: clientWidth,
-                        height: clientWidth * 1.1,
+                        height: clientWidth * 1.2,
                     });
                     console.log(`${width}x${height}`); // 640x480
 
