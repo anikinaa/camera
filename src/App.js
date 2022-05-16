@@ -75,6 +75,7 @@ function App() {
 
 
     const imageRef = useRef(null);
+    const wrapRef = useRef(null);
     const [model, setModel] = useState(null);
     // eslint-disable-next-line no-unused-vars
     const [photo, setPhoto] = useState(null);
@@ -86,6 +87,10 @@ function App() {
     const [size, setSize] = useState({width: undefined, height: 0});
 
     useEffect(() => {
+        setSize({
+            width: 390,
+            height: 844,
+        });
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
                 .getUserMedia({
@@ -97,6 +102,9 @@ function App() {
                 .then(async (stream) => {
                     window.stream = stream;
                     videoRef.current.srcObject = stream;
+
+                    let {width, height} = stream.getTracks()[0].getSettings();
+                    console.log(`${width}x${height}`); // 640x480
 
                     const devices = await navigator.mediaDevices.enumerateDevices();
 
@@ -111,8 +119,86 @@ function App() {
     }, []);
 
     useEffect(() => {
+        if (model) {
+            const detectFrame = () => {
+                tf.engine().startScope();
 
-    }, [])
+                const img = tf.browser.fromPixels(videoRef.current);
+                const smallImg = tf.image.resizeBilinear(img, [MODEL_SIZE, MODEL_SIZE]);
+                const input = tf.sub(tf.div(tf.expandDims(smallImg), 127.5), 1);
+
+                console.log('W ', videoRef.current.videoWidth);
+                console.log('H', videoRef.current.videoHeight);
+                let outputTensor = model.predict(input);
+                // console.timeEnd('predict');
+
+                // console.log('size',size)
+                const boxes = outputTensor['StatefulPartitionedCall:3'].arraySync()[0];
+                const classes = outputTensor['StatefulPartitionedCall:2'].arraySync()[0];
+                const probability = outputTensor['StatefulPartitionedCall:1'].arraySync()[0];
+
+
+                let result = {};
+                let resultPoints = {};
+
+                for (let index in probability) {
+                    if (probability[index] < K) {
+                        break;
+                    }
+                    const classKey = classes[index];
+
+                    if (result[classKey] === undefined) {
+                        const [y1, x1, y2, x2] = boxes[index]
+                        result[classKey] = {
+                            top: y1 * size.height,
+                            left: x1 * size.width,
+                            right: size.width - (x2 * size.width),
+                            bottom: size.height - (y2 * size.height),
+                            probability: probability[index].toFixed(2),
+                            color: COLOR[classKey]
+                        };
+
+                        const leftB = x1 * size.width;
+                        const rightB = x2 * size.width;
+                        let widthB = rightB - leftB;
+                        let centerWidthB = widthB / 2;
+
+                        if (SHIFT[classKey]?.width) {
+                            centerWidthB+= widthB * SHIFT[classKey]?.width
+                        }
+                        const left = leftB + centerWidthB;
+
+                        const topB = y1 * size.height;
+                        const bottomB = y2 * size.height;
+                        let heightB = bottomB - topB;
+                        let centerHeightB = heightB / 2;
+
+                        if (SHIFT[classKey]?.height) {
+                            centerHeightB+= heightB * SHIFT[classKey]?.height
+                        }
+                        const top = topB + centerHeightB;
+
+                        resultPoints[classKey] = {
+                            top,
+                            left,
+                            probability: probability[index].toFixed(2),
+                            color: COLOR[classKey]
+                        }
+                    }
+                }
+                setBox(result);
+                setPoints(resultPoints);
+
+                requestAnimationFrame(() => {
+                    detectFrame();
+                });
+                tf.engine().endScope();
+
+            }
+
+            detectFrame();
+        }
+    }, [size, model]);
 
     useEffect(() => {
         tflite.loadTFLiteModel(MODEL).then(_model => {
@@ -191,8 +277,8 @@ function App() {
     // eslint-disable-next-line no-unused-vars
     const onLoadImg = useCallback(() => {
         setSize({
-            width: imageRef.current.width,
-            height: imageRef.current.height,
+            width: wrapRef.current.videoWidth,
+            height: wrapRef.current.videoHeight,
         });
         setIsLoadPhoto(true);
     }, [setSize, setIsLoadPhoto]);
@@ -209,10 +295,12 @@ function App() {
         }
     }, [predict, isLoadPhoto])
 
+    // console.log(box)
     return (
-        <div style={{
+        <div ref={wrapRef} style={{
             width: '100vw',
             height: '100vh',
+            position: 'relative'
         }}>
 
         <video
@@ -222,10 +310,30 @@ function App() {
           playsInline
           muted
           ref={videoRef}
-          width="640"
-          height="640"
           id="frame"
         />
+
+
+                    {Object.entries(box).map(([index, {probability, color, ...style}]) => (
+                        <div key={index} style={{
+                            position: 'absolute',
+                            border: '2px solid',
+                            borderColor: color,
+                            color,
+                            ...style
+                        }}>
+                            {/*<div style={{*/}
+                            {/*    fontSize: '12px',*/}
+                            {/*    position: 'absolute',*/}
+                            {/*    top: '-19px',*/}
+                            {/*    left: '-3px',*/}
+                            {/*    padding: '0px 3px',*/}
+                            {/*    backgroundColor: 'white'*/}
+                            {/*}}>*/}
+                            {/*    {probability}*/}
+                            {/*</div>*/}
+                        </div>
+                    ))}
 
             {/*<Camera*/}
             {/*    idealFacingMode = {FACING_MODES.ENVIRONMENT}*/}
