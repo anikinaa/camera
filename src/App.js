@@ -87,10 +87,6 @@ function App() {
     const [size, setSize] = useState({width: undefined, height: 0});
 
     useEffect(() => {
-        setSize({
-            width: 390,
-            height: 844,
-        });
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
                 .getUserMedia({
@@ -103,10 +99,19 @@ function App() {
                     window.stream = stream;
                     videoRef.current.srcObject = stream;
 
+                    const clientWidth = document.getElementsByTagName('body')[0].clientWidth;
                     let {width, height} = stream.getTracks()[0].getSettings();
+
+                    setSize({
+                        width: clientWidth,
+                        height: clientWidth * height / width,
+                    });
                     console.log(`${width}x${height}`); // 640x480
 
                     const devices = await navigator.mediaDevices.enumerateDevices();
+
+
+
 
                     console.log(devices)
                     return new Promise((resolve) => {
@@ -295,7 +300,7 @@ function App() {
         }
     }, [predict, isLoadPhoto])
 
-    // console.log(box)
+    console.log(size)
     return (
         <div ref={wrapRef} style={{
             width: '100vw',
@@ -312,28 +317,61 @@ function App() {
           ref={videoRef}
           id="frame"
         />
+            <div style={{
+                position: "absolute",
+                border: '3px solid red',
+                width: size.width,
+                height: size.height,
+                top: '50%',
+                marginTop: `-${size.height/2}px`
+            }}>
+                        {Object.entries(points).map(([index, {probability, color, ...style}]) => (
+                            <div key={index} style={{
+                                position: 'absolute',
+                                backgroundColor: color,
+                                width: '16px',
+                                height: '16px',
+                                marginLeft: '-8px',
+                                marginTop: '-8px',
+                                borderRadius: '8px',
+                                color,
+                                ...style
+                            }}>
+                                {/*<div style={{*/}
+                                {/*    fontSize: '12px',*/}
+                                {/*    position: 'absolute',*/}
+                                {/*    top: '-19px',*/}
+                                {/*    left: '-3px',*/}
+                                {/*    padding: '0px 3px',*/}
+                                {/*    backgroundColor: 'white'*/}
+                                {/*}}>*/}
+                                {/*    {probability}*/}
+                                {/*</div>*/}
+                            </div>
+                        ))}
+                {Object.entries(box).map(([index, {probability, color, ...style}]) => (
+                    <div key={index} style={{
+                        position: 'absolute',
+                        border: '2px solid',
+                        borderColor: color,
+                        color,
+                        ...style
+                    }}>
+                        {/*<div style={{*/}
+                        {/*    fontSize: '12px',*/}
+                        {/*    position: 'absolute',*/}
+                        {/*    top: '-19px',*/}
+                        {/*    left: '-3px',*/}
+                        {/*    padding: '0px 3px',*/}
+                        {/*    backgroundColor: 'white'*/}
+                        {/*}}>*/}
+                        {/*    {probability}*/}
+                        {/*</div>*/}
+                    </div>
+                ))}
+            </div>
 
 
-                    {Object.entries(box).map(([index, {probability, color, ...style}]) => (
-                        <div key={index} style={{
-                            position: 'absolute',
-                            border: '2px solid',
-                            borderColor: color,
-                            color,
-                            ...style
-                        }}>
-                            {/*<div style={{*/}
-                            {/*    fontSize: '12px',*/}
-                            {/*    position: 'absolute',*/}
-                            {/*    top: '-19px',*/}
-                            {/*    left: '-3px',*/}
-                            {/*    padding: '0px 3px',*/}
-                            {/*    backgroundColor: 'white'*/}
-                            {/*}}>*/}
-                            {/*    {probability}*/}
-                            {/*</div>*/}
-                        </div>
-                    ))}
 
             {/*<Camera*/}
             {/*    idealFacingMode = {FACING_MODES.ENVIRONMENT}*/}
@@ -349,30 +387,6 @@ function App() {
             {/*                position: 'absolute',*/}
             {/*                border: '2px solid',*/}
             {/*                borderColor: color,*/}
-            {/*                color,*/}
-            {/*                ...style*/}
-            {/*            }}>*/}
-            {/*                /!*<div style={{*!/*/}
-            {/*                /!*    fontSize: '12px',*!/*/}
-            {/*                /!*    position: 'absolute',*!/*/}
-            {/*                /!*    top: '-19px',*!/*/}
-            {/*                /!*    left: '-3px',*!/*/}
-            {/*                /!*    padding: '0px 3px',*!/*/}
-            {/*                /!*    backgroundColor: 'white'*!/*/}
-            {/*                /!*}}>*!/*/}
-            {/*                /!*    {probability}*!/*/}
-            {/*                /!*</div>*!/*/}
-            {/*            </div>*/}
-            {/*        ))}*/}
-            {/*        {Object.entries(points).map(([index, {probability, color, ...style}]) => (*/}
-            {/*            <div key={index} style={{*/}
-            {/*                position: 'absolute',*/}
-            {/*                backgroundColor: color,*/}
-            {/*                width: '16px',*/}
-            {/*                height: '16px',*/}
-            {/*                marginLeft: '-8px',*/}
-            {/*                marginTop: '-8px',*/}
-            {/*                borderRadius: '8px',*/}
             {/*                color,*/}
             {/*                ...style*/}
             {/*            }}>*/}
