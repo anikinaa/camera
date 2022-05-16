@@ -5,7 +5,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import Camera from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 
-import src from './t2.jpg';
+// import src from './t2.jpg';
 
 // https://github.com/tensorflow/tfjs/issues/6026
 tflite.setWasmPath('tflite_wasm/');
