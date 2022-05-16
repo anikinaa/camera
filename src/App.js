@@ -99,26 +99,15 @@ function App() {
                     window.stream = stream;
                     videoRef.current.srcObject = stream;
 
-                    const clientWidth = document.getElementsByTagName('body')[0].clientWidth - 6;
-                    let {width, height} = stream.getTracks()[0].getSettings();
+                    const clientWidth = document.getElementsByTagName('body')[0].clientWidth;
+                    // let {width, height} = stream.getTracks()[0].getSettings();
 
                     setSize({
-                        width: clientWidth,
+                        width: clientWidth - 6,
                         height: clientWidth * 1.3,
                     });
-                    console.log(`${width}x${height}`); // 640x480
-
-                    const devices = await navigator.mediaDevices.enumerateDevices();
 
 
-
-
-                    console.log(devices)
-                    return new Promise((resolve) => {
-                        videoRef.current.onloadedmetadata = () => {
-                            resolve();
-                        };
-                    });
                 });
         }
     }, []);
@@ -300,7 +289,10 @@ function App() {
         }
     }, [predict, isLoadPhoto])
 
-    console.log(size)
+    if (!model) {
+        return null;
+    }
+
     return (
         <div ref={wrapRef} style={{
             width: '100vw',
