@@ -2,7 +2,7 @@ import '@tensorflow/tfjs-backend-cpu';
 import * as tf from '@tensorflow/tfjs-core';
 import * as tflite from '@tensorflow/tfjs-tflite';
 import {useCallback, useEffect, useRef, useState} from "react";
-import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
+import Camera, { FACING_MODES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 
 // import src from './t2.jpg';
@@ -177,6 +177,7 @@ function App() {
             <Camera
                 idealFacingMode = {FACING_MODES.ENVIRONMENT}
                 onTakePhoto={onTakePhoto}
+                isSilentMode={true}
             />
             {photo && (
                 <div style={{height: `600px`, width: size.width, position: 'relative'}}>
