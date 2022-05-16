@@ -4,6 +4,7 @@ import * as tf from "@tensorflow/tfjs-core";
 import Camera, {FACING_MODES} from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import {useCallback, useEffect, useRef, useState} from "react";
+import {config} from "./config";
 
 import {Loading} from './loading'
 import {Modal} from './modal'
@@ -160,7 +161,7 @@ function App() {
                             <img ref={imageRef} src={photo} alt="" onLoad={onLoadPhoto}/>
 
                             {Object.entries(points).map(([index, {probability, color, ...style}]) => (
-                                <div key={index} className={'point'} style={style} onClick={selectPoint.bind({index})} />
+                                config[index] && <div key={index} className={'point'} style={style} onClick={selectPoint.bind({index})} />
                             ))}
                             <button className={'back'} onClick={resetPhoto}>Назад</button>
                         </div>
