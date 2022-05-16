@@ -121,12 +121,8 @@ function App() {
                 const smallImg = tf.image.resizeBilinear(img, [MODEL_SIZE, MODEL_SIZE]);
                 const input = tf.sub(tf.div(tf.expandDims(smallImg), 127.5), 1);
 
-                console.log('W ', videoRef.current.videoWidth);
-                console.log('H', videoRef.current.videoHeight);
                 let outputTensor = model.predict(input);
-                // console.timeEnd('predict');
 
-                // console.log('size',size)
                 const boxes = outputTensor['StatefulPartitionedCall:3'].arraySync()[0];
                 const classes = outputTensor['StatefulPartitionedCall:2'].arraySync()[0];
                 const probability = outputTensor['StatefulPartitionedCall:1'].arraySync()[0];
@@ -288,11 +284,6 @@ function App() {
             predict();
         }
     }, [predict, isLoadPhoto])
-
-    if (!model) {
-        return null;
-    }
-
     return (
         <div ref={wrapRef} style={{
             width: '100vw',
@@ -307,7 +298,6 @@ function App() {
           playsInline
           muted
           ref={videoRef}
-          id="frame"
         />
             <div style={{
                 position: "absolute",
