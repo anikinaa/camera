@@ -2,6 +2,8 @@ import '@tensorflow/tfjs-backend-cpu';
 import * as tf from '@tensorflow/tfjs-core';
 import * as tflite from '@tensorflow/tfjs-tflite';
 import {useCallback, useEffect, useRef, useState} from "react";
+import Camera from 'react-html5-camera-photo';
+import 'react-html5-camera-photo/build/css/index.css';
 
 import src from './t2.jpg';
 
@@ -69,9 +71,12 @@ const MODEL_SIZE = 320;
 function App() {
     const imageRef = useRef(null);
     const [model, setModel] = useState(null);
+    const [photo, setPhoto] = useState(null);
+    const [isLoadPhoto, setIsLoadPhoto] = useState(false);
     const [box, setBox] = useState({});
     const [points, setPoints] = useState({});
     const [size, setSize] = useState({width: undefined, height: 0});
+
 
     useEffect(() => {
         tflite.loadTFLiteModel(MODEL).then(_model => {
@@ -79,7 +84,7 @@ function App() {
         })
     }, [setModel, setSize]);
 
-    useEffect(() => {
+    const predict = useCallback(() => {
         if (model) {
             const img = tf.browser.fromPixels(imageRef.current);
             const smallImg = tf.image.resizeBilinear(img, [MODEL_SIZE, MODEL_SIZE]);
@@ -145,64 +150,83 @@ function App() {
             setBox(result);
             setPoints(resultPoints);
         }
-    }, [model, size])
+    }, [model, size]);
 
     const onLoadImg = useCallback(() => {
         setSize({
             width: imageRef.current.width,
             height: imageRef.current.height,
-        })
-    }, [setSize]);
+        });
+        setIsLoadPhoto(true);
+    }, [setSize, setIsLoadPhoto]);
+
+    const onTakePhoto = useCallback((data) => {
+        setIsLoadPhoto(false);
+        setPhoto(data);
+    }, [setPhoto, setIsLoadPhoto]);
+
+    useEffect(() => {
+        if (isLoadPhoto) {
+            predict();
+        }
+    }, [predict, isLoadPhoto])
 
     return (
         <div>
-            <div style={{height: `600px`, width: size.width, position: 'relative'}}>
-                <img ref={imageRef} src={src} alt="" style={{height: `100%`}} onLoad={onLoadImg}/>
-                {/*{Object.entries(box).map(([index, {probability, color, ...style}]) => (*/}
-                {/*    <div key={index} style={{*/}
-                {/*        position: 'absolute',*/}
-                {/*        border: '2px solid',*/}
-                {/*        borderColor: color,*/}
-                {/*        color,*/}
-                {/*        ...style*/}
-                {/*    }}>*/}
-                {/*        /!*<div style={{*!/*/}
-                {/*        /!*    fontSize: '12px',*!/*/}
-                {/*        /!*    position: 'absolute',*!/*/}
-                {/*        /!*    top: '-19px',*!/*/}
-                {/*        /!*    left: '-3px',*!/*/}
-                {/*        /!*    padding: '0px 3px',*!/*/}
-                {/*        /!*    backgroundColor: 'white'*!/*/}
-                {/*        /!*}}>*!/*/}
-                {/*        /!*    {probability}*!/*/}
-                {/*        /!*</div>*!/*/}
-                {/*    </div>*/}
-                {/*))}*/}
-                {Object.entries(points).map(([index, {probability, color, ...style}]) => (
-                    <div key={index} style={{
-                        position: 'absolute',
-                        backgroundColor: color,
-                        width: '16px',
-                        height: '16px',
-                        marginLeft: '-8px',
-                        marginTop: '-8px',
-                        borderRadius: '8px',
-                        color,
-                        ...style
-                    }}>
-                        {/*<div style={{*/}
-                        {/*    fontSize: '12px',*/}
-                        {/*    position: 'absolute',*/}
-                        {/*    top: '-19px',*/}
-                        {/*    left: '-3px',*/}
-                        {/*    padding: '0px 3px',*/}
-                        {/*    backgroundColor: 'white'*/}
-                        {/*}}>*/}
-                        {/*    {probability}*/}
-                        {/*</div>*/}
-                    </div>
-                ))}
-            </div>
+
+            <Camera
+                onTakePhoto={onTakePhoto}
+            />
+            {photo && (
+                <div style={{height: `600px`, width: size.width, position: 'relative'}}>
+                    {/*<img src={src} alt="" style={{height: `100%`}}/>*/}
+                    <img ref={imageRef} src={photo} alt="" style={{height: `100%`}} onLoad={onLoadImg}/>
+                    {Object.entries(box).map(([index, {probability, color, ...style}]) => (
+                        <div key={index} style={{
+                            position: 'absolute',
+                            border: '2px solid',
+                            borderColor: color,
+                            color,
+                            ...style
+                        }}>
+                            {/*<div style={{*/}
+                            {/*    fontSize: '12px',*/}
+                            {/*    position: 'absolute',*/}
+                            {/*    top: '-19px',*/}
+                            {/*    left: '-3px',*/}
+                            {/*    padding: '0px 3px',*/}
+                            {/*    backgroundColor: 'white'*/}
+                            {/*}}>*/}
+                            {/*    {probability}*/}
+                            {/*</div>*/}
+                        </div>
+                    ))}
+                    {Object.entries(points).map(([index, {probability, color, ...style}]) => (
+                        <div key={index} style={{
+                            position: 'absolute',
+                            backgroundColor: color,
+                            width: '16px',
+                            height: '16px',
+                            marginLeft: '-8px',
+                            marginTop: '-8px',
+                            borderRadius: '8px',
+                            color,
+                            ...style
+                        }}>
+                            {/*<div style={{*/}
+                            {/*    fontSize: '12px',*/}
+                            {/*    position: 'absolute',*/}
+                            {/*    top: '-19px',*/}
+                            {/*    left: '-3px',*/}
+                            {/*    padding: '0px 3px',*/}
+                            {/*    backgroundColor: 'white'*/}
+                            {/*}}>*/}
+                            {/*    {probability}*/}
+                            {/*</div>*/}
+                        </div>
+                    ))}
+                </div>
+            ) }
             {model && <p>ready</p>}
         </div>
     );

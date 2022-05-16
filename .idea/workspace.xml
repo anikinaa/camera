@@ -2,22 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e4735c7f-555e-4d79-b2fe-debaa9381635" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/public/model.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/model_fp16_p-0.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/model_fp16_p-1.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/model_fp16_p-2.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/model_fp16_p.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/model_fp16_p_15_0.tflite" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/t1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/t2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/v1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logo.svg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +55,23 @@
       <recent name="C:\projects\tfjs-web\public" />
       <recent name="C:\projects\tfjs-web\src" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
