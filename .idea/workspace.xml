@@ -2,22 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e4735c7f-555e-4d79-b2fe-debaa9381635" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/public/images/2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/images/3.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/0.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/14.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/15.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/6.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/7.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/images/9.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/modal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
