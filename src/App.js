@@ -48,6 +48,8 @@ const SHIFT = {
 const K = 0.5;
 const MODEL_SIZE = 320;
 
+// TODO - обавить фото для предзагрузки
+
 function App() {
     const imageRef = useRef();
     const [model, setModel] = useState(null);
@@ -145,6 +147,9 @@ function App() {
 
     return (
         <div className={'wrap with-bg'}>
+            <div className="wrap-image-hidden">
+                {new Array(15).fill('').map((v, i) => <img key={i} src={`images/${i}.png`} alt=""/>)}
+            </div>
             {model ? (
                 <>
                     <Camera
